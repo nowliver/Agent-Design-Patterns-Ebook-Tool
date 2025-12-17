@@ -4,6 +4,11 @@
 // 生成日期：2025年12月
 // ============================================================
 
+#import "@preview/codly:1.3.0": *
+#import "@preview/codly-languages:0.1.1": *
+#show: codly-init.with()
+#codly(languages: codly-languages)
+
 // 文档元数据
 #set document(
   title: "智能体设计模式：构建智能系统的实践指南",
@@ -39,9 +44,28 @@
   },
 )
 
+#show heading: it => [
+  // 设置字体为粗体，颜色为深蓝色
+  #set text(weight: "bold", fill: rgb("#0180cf"), stroke: 0.1pt)
+  // 在标题上方和下方添加间距
+  #block(above: 1.5em, below: 1em)[
+    // 如果开启了编号，手动显示编号
+    #rect(radius: 8pt, fill: rgb("#e0f0ff"))[
+    #if it.numbering != none and it.level != 1 {
+      counter(heading).display(it.numbering)
+      h(0.5em) // 编号和标题文字之间的空隙
+    }
+    #it.body
+    ]
+  ]
+]
+
+// = 一级标题
+// == 二级标题
+
 // 文本设置 - 优先使用系统中文字体
 #set text(
-  font: ("Source Han Serif SC", "Noto Serif CJK SC", "SimSun", "Microsoft YaHei"),
+  font: ("SimSun", "Microsoft YaHei"),
   size: 11pt,
   lang: "zh",
   region: "cn",
@@ -60,37 +84,34 @@
 
 // 一级标题样式
 #show heading.where(level: 1): it => {
-  set text(size: 20pt, weight: "bold")
+  set text(size: 20pt, weight: "bold", font: ("SimHei"))
   set block(above: 2em, below: 1.5em)
   it
 }
 
 // 二级标题样式
 #show heading.where(level: 2): it => {
-  set text(size: 16pt, weight: "bold")
+  set text(size: 16pt, weight: "bold", font: ("SimHei"))
   set block(above: 1.8em, below: 1em)
   it
 }
 
 // 三级标题样式
 #show heading.where(level: 3): it => {
-  set text(size: 13pt, weight: "bold")
+  set text(size: 13pt, weight: "bold", font: ("SimHei"))
   set block(above: 1.5em, below: 0.8em)
   it
 }
 
 // 四级及以下标题样式
 #show heading.where(level: 4): it => {
-  set text(size: 11pt, weight: "bold")
+  set text(size: 11pt, weight: "bold", font: ("SimHei"))
   set block(above: 1.2em, below: 0.6em)
   it
 }
 
 // 代码块样式
-#show raw.where(block: true): it => {
-  set text(font: ("Consolas", "Source Code Pro", "Courier New"), size: 9pt)
-  it
-}
+#show raw.where(block: true): set text(font: ("Consolas", "Source Code Pro", "Courier New", "STSong"), size: 9pt)
 
 // 行内代码样式
 #show raw.where(block: false): box.with(
@@ -109,6 +130,36 @@
 // 列表样式
 #set list(indent: 1.5em, body-indent: 0.5em)
 #set enum(indent: 1.5em, body-indent: 0.5em)
+
+#show list: it => {
+  // set text(size: 11pt)
+  rect(width: 100%, stroke: (left: blue+2pt), fill: rgb("#f0f8ff"))[
+    // #set par(leading: 0.4em)
+    #it
+  ]
+}
+
+#show enum: it => {
+  let start = if it.start == none or it.start == auto { 1 } else { it.start }
+  let num-fmt = if it.numbering == none or it.numbering == auto { "1." } else { it.numbering }
+  
+  stack(
+    dir: ttb,
+    spacing: 0em,
+    ..it.children.enumerate().map(((i, item)) => {
+      let num = start + i
+      rect(width: 100%, stroke: (left: purple+2pt), fill: rgb("#faf0ff"), outset: 0%+0pt)[
+        #set par(leading: 0.8em)
+        #grid(
+          columns: (auto, 1fr),
+          column-gutter: 0.5em,
+          numbering(num-fmt, num),
+          item.body
+        )
+      ]
+    })
+  )
+}
 
 
 // ============================================================
@@ -207,7 +258,7 @@
 
 #pagebreak(weak: true)
 
-= 【AI Agent开发书籍】《智能体设计模式：构建智能系统的实践指南》（全文）
+= 《智能体设计模式：构建智能系统的实践指南》（全文）
 
 10月初，谷歌资深工程主管、杰出工程师Antonio Gulli免费公开发布了一本长达400多页的新书——《Agentic Design Patterns: A Hands-On Guide to Building Intelligent Systems》。该书旨在为当前火热的AI Agent开发领域提供首批系统性的“设计模式”，更有条理地构建强大、可靠的智能系统。
 
@@ -460,7 +511,7 @@
 
 #pagebreak(weak: true)
 
-= 【AI Agent开发书籍】《智能体设计模式：构建智能系统的实践指南》（第一部分）
+= 《智能体设计模式：构建智能系统的实践指南》（第一部分）
 
 10月初，谷歌资深工程主管、杰出工程师Antonio Gulli免费公开发布了一本长达400多页的新书——《Agentic Design Patterns: A Hands-On Guide to Building Intelligent Systems》。该书旨在为当前火热的AI Agent开发领域提供首批系统性的“设计模式”，更有条理地构建强大、可靠的智能系统。
 
@@ -509,12 +560,12 @@
 例如，上述趋势识别步骤的输出可以被格式化为一个 JSON 对象：
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````json
 {
   "trends": [
     {
@@ -527,16 +578,16 @@
     }
   ]
 }
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````json
 {
   "trends": [
     {
@@ -549,7 +600,7 @@
     }
   ]
 }
-```
+````
 ]
 
 这种结构化格式确保了数据是机器可读的，可以被精确地解析并无歧义地插入到下一个提示词中。这种做法最大限度地减少了因解读自然语言可能产生的错误，是构建稳健、多步骤 LLM 应用的关键一环。
@@ -659,12 +710,12 @@ pip install langchain langchain-community langchain-openai langgraph
 请注意，langchain-openai包可以替换为其他模型提供商（如Google Gemini, Anthropic等）对应的包。安装后，必须在执行环境中配置好所选语言模型提供商的 API 密钥。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 import os
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
@@ -710,16 +761,16 @@ final_result = full_chain.invoke({"text_input": input_text})
 
 print("\n--- Final JSON Output ---")
 print(final_result)
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 import os
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
@@ -765,7 +816,7 @@ final_result = full_chain.invoke({"text_input": input_text})
 
 print("\n--- Final JSON Output ---")
 print(final_result)
-```
+````
 ]
 
 上述 Python 代码展示了如何运用 LangChain 库来处理文本。它构建了两个独立的提示词：第一个用于从输入字符串中提取技术规格，第二个则用于将这些规格格式化为 JSON 对象。代码使用ChatOpenAI模型进行语言模型交互，并用StrOutputParser确保输出是易于使用的字符串格式。
@@ -869,12 +920,12 @@ pip install langchain langgraph google-cloud-aiplatform langchain-google-genai g
 您还需要在本地环境中配置好所选语言模型（如 OpenAI、Google Gemini、Anthropic）的 API 密钥。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # 版权所有 (c) 2025 Marco Fago
 # https://www.linkedin.com/in/marco-fago/
 #
@@ -976,16 +1027,16 @@ def main():
 
 if __name__ == "__main__":
     main()
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # 版权所有 (c) 2025 Marco Fago
 # https://www.linkedin.com/in/marco-fago/
 #
@@ -1087,7 +1138,7 @@ def main():
 
 if __name__ == "__main__":
     main()
-```
+````
 ]
 
 如前所述，该 Python 代码使用 LangChain 库与 gemini-1.5-flash 模型，构建了一个简洁的类智能体系统。其核心逻辑是：定义了booking\_handler（预订）、info\_handler（信息）和unclear\_handler（不明）三个模拟的子智能体处理器。
@@ -1101,12 +1152,12 @@ if __name__ == "__main__":
 下面的 Python 代码演示了如何使用谷歌 ADK 库构建一个应用。该示例设置了一个“协调器”智能体，它会根据预设指令，将用户请求路由给专业的子智能体（“Booker”负责预订，“Info”负责查询信息）。子智能体继而调用各自的工具来模拟请求的处理，以此展示 ADK 体系内的基础委托模式。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # 版权所有 (c) 2025 Marco Fago
 #
 # 本代码根据 MIT 许可证授权。
@@ -1240,16 +1291,16 @@ if __name__ == "__main__":
    # 在Jupyter等环境中，需要使用await来运行异步主函数
    import asyncio
    asyncio.run(main())
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # 版权所有 (c) 2025 Marco Fago
 #
 # 本代码根据 MIT 许可证授权。
@@ -1383,7 +1434,7 @@ if __name__ == "__main__":
    # 在Jupyter等环境中，需要使用await来运行异步主函数
    import asyncio
    asyncio.run(main())
-```
+````
 ]
 
 该脚本包含一个主协调器智能体和两个专业的子智能体：Booker和Info。每个专业智能体都配备了一个 FunctionTool，该工具将一个普通的 Python 函数（booking\_handler或info\_handler）封装起来，用以模拟具体的操作。
@@ -1524,12 +1575,12 @@ run\_coordinator函数负责具体的执行流程，它会初始化一个内存�
 运行此示例前，需要先安装必要的 Python 库，如langchain、langchain-community以及一个模型提供商的库（如langchain-openai）。此外，还必须在本地环境中配置好所选语言模型的有效 API 密钥。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 import os
 import asyncio
 from typing import Optional
@@ -1633,16 +1684,16 @@ if __name__ == "__main__":
    test_topic = "The history of space exploration"
    # 在 Python 3.7+ 中，asyncio.run 是运行异步函数的标准方法。
    asyncio.run(run_parallel_example(test_topic))
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 import os
 import asyncio
 from typing import Optional
@@ -1746,7 +1797,7 @@ if __name__ == "__main__":
    test_topic = "The history of space exploration"
    # 在 Python 3.7+ 中，asyncio.run 是运行异步函数的标准方法。
    asyncio.run(run_parallel_example(test_topic))
-```
+````
 ]
 
 上述 Python 代码实现了一个 LangChain 应用，它通过并行执行来高效地处理给定主题。其核心逻辑如下：
@@ -1774,12 +1825,12 @@ if __name__ == "__main__":
 接下来，将通过一个具体示例，演示如何在谷歌 ADK 框架内应用并行化思想。本示例将展示如何利用ParallelAgent和SequentialAgent等 ADK 基础组件，来构建一个借助并发执行提升效率的智能体工作流。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from google.adk.agents import LlmAgent, ParallelAgent, SequentialAgent
 from google.adk.tools import google_search
 
@@ -1893,16 +1944,16 @@ sequential_pipeline_agent = SequentialAgent(
 
 # 将 sequential_pipeline_agent 设置为根智能体
 root_agent = sequential_pipeline_agent
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from google.adk.agents import LlmAgent, ParallelAgent, SequentialAgent
 from google.adk.tools import google_search
 
@@ -2016,7 +2067,7 @@ sequential_pipeline_agent = SequentialAgent(
 
 # 将 sequential_pipeline_agent 设置为根智能体
 root_agent = sequential_pipeline_agent
-```
+````
 ]
 
 上述代码定义了一个用于研究并整合可持续技术信息的多智能体系统。其核心工作流程如下：
@@ -2155,12 +2206,12 @@ pip install langchain langchain-community langchain-openai python-dotenv
 您还需要在本地环境中（通常是.env文件）配置好所选语言模型的 API 密钥。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 import os
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
@@ -2260,16 +2311,16 @@ This function should do the following:
 
 if __name__ == "__main__":
     run_reflection_loop()
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 import os
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
@@ -2369,7 +2420,7 @@ This function should do the following:
 
 if __name__ == "__main__":
     run_reflection_loop()
-```
+````
 ]
 
 上述代码通过一个for循环，清晰地演示了“生成-反思-精炼”的迭代过程：
@@ -2391,12 +2442,12 @@ if __name__ == "__main__":
 接下来，将通过一个概念性的代码示例，演示如何在谷歌 ADK 框架内实现“反思”模式。该示例采用了一种“生成者-批评家”（Generator-Critic）的结构，其中一个组件（生成者）负责产出初始结果，而另一个组件（批评家）则对其进行批判性反馈，从而引导“生成者”产出更精确、更完善的最终结果。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from google.adk.agents import SequentialAgent, LlmAgent
 
 # 1. 定义“生成者”智能体，负责生成初始草稿。
@@ -2434,16 +2485,16 @@ review_pipeline = SequentialAgent(
 # 1. `generator` 运行 -> 将生成的段落保存到 state['draft_text']。
 # 2. `reviewer` 运行 -> 读取 state['draft_text'] 的内容，进行评审，
 #    然后将其字典格式的输出保存到 state['review_output']。
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from google.adk.agents import SequentialAgent, LlmAgent
 
 # 1. 定义“生成者”智能体，负责生成初始草稿。
@@ -2481,7 +2532,7 @@ review_pipeline = SequentialAgent(
 # 1. `generator` 运行 -> 将生成的段落保存到 state['draft_text']。
 # 2. `reviewer` 运行 -> 读取 state['draft_text'] 的内容，进行评审，
 #    然后将其字典格式的输出保存到 state['review_output']。
-```
+````
 ]
 
 上述代码通过谷歌 ADK 构建了一个“撰写并审查”的顺序化智能体流水线。
@@ -2618,12 +2669,12 @@ SequentialAgent: 名为review\_pipeline的顺序智能体是整个工作流的�
 运行本示例需要安装 LangChain 核心库和一个模型提供商的库。此外，还必须在本地环境中配置好所选语言模型服务的有效 API 密钥。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 import os, getpass
 import asyncio
 import nest_asyncio
@@ -2713,16 +2764,16 @@ async def main():
 nest_asyncio.apply()
 # 运行主异步函数
 asyncio.run(main())
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 import os, getpass
 import asyncio
 import nest_asyncio
@@ -2812,7 +2863,7 @@ async def main():
 nest_asyncio.apply()
 # 运行主异步函数
 asyncio.run(main())
-```
+````
 ]
 
 上述代码使用 LangChain 和 谷歌 Gemini 模型，构建了一个具备工具调用能力的智能体。其核心步骤如下：
@@ -2838,12 +2889,12 @@ main函数利用asyncio.gather来并发地运行多个查询任务，分别测�
 本节代码提供了一个如何在CrewAI框架内实现函数调用（即“工具使用”）的实践案例。示例构建了一个简单场景：创建一个智能体，并为其配备一个用于信息查询的工具，具体演示如何利用该智能体和工具获取一只（模拟的）股票价格。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # 首先，请确保已安装必要的库: pip install crewai langchain-openai
 import os
 from crewai import Agent, Task, Crew
@@ -2939,16 +2990,16 @@ def main():
 
 if __name__ == "__main__":
    main()
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # 首先，请确保已安装必要的库: pip install crewai langchain-openai
 import os
 from crewai import Agent, Task, Crew
@@ -3044,7 +3095,7 @@ def main():
 
 if __name__ == "__main__":
    main()
-```
+````
 ]
 
 该代码演示了如何使用 CrewAI 库来模拟一个金融分析任务。其核心逻辑展示了如何在 CrewAI 中通过定义工具、智能体和任务来创建一个协作式工作流。
@@ -3086,12 +3137,12 @@ verbose=True的设置使得智能体在执行过程中的思考和行动日志�
 谷歌智能体开发套件（ADK）提供了一个原生集成的工具库，开发者可以直接将其赋予智能体。其中一个典型的预置（pre-built）工具就是谷歌搜索，它为智能体提供了直接调用谷歌搜索引擎、从互联网检索外部信息的能力。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from google.adk.agents import Agent
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
@@ -3142,16 +3193,16 @@ async def call_agent(query):
 nest_asyncio.apply()
 # 异步运行调用函数
 asyncio.run(call_agent("what's the latest ai news?"))
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from google.adk.agents import Agent
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
@@ -3202,7 +3253,7 @@ async def call_agent(query):
 nest_asyncio.apply()
 # 异步运行调用函数
 asyncio.run(call_agent("what's the latest ai news?"))
-```
+````
 ]
 
 上述代码演示了如何使用 Google ADK 创建并运行一个具备谷歌搜索能力的基础智能体。
@@ -3236,12 +3287,12 @@ runner.run方法接收用户消息并启动智能体。它返回的不是单个�
 谷歌 ADK 为一些专门任务提供了原生的集成组件，其中就包括一个用于动态执行代码的环境。built\_in\_code\_execution工具为智能体提供了一个沙箱化的 Python 解释器。这使得模型能够自主编写并运行代码，以完成计算任务、操作数据结构或执行程序化脚本。对于那些需要确定性逻辑和精确计算（这超出了纯粹概率性语言生成的范畴）的问题，此类功能至关重要。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 import os, getpass
 import asyncio
 import nest_asyncio
@@ -3328,16 +3379,16 @@ except RuntimeError as e:
       print("请在 notebook 单元格中直接使用 `await main()` 来运行。")
   else:
       raise e
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 import os, getpass
 import asyncio
 import nest_asyncio
@@ -3424,7 +3475,7 @@ except RuntimeError as e:
       print("请在 notebook 单元格中直接使用 `await main()` 来运行。")
   else:
       raise e
-```
+````
 ]
 
 该脚本使用谷歌 ADK 创建了一个能够通过编写并执行 Python 代码来解决数学问题的智能体。其核心逻辑如下：
@@ -3454,12 +3505,12 @@ main函数通过两个不同的数学问题（一个简单的算式和一个阶�
 本节代码演示了如何使用谷歌 ADK 库构建一个企业级搜索应用。其核心是VSearchAgent，这是一种专门的智能体，能够通过连接到指定的Vertex AI Search 数据存储区（datastore）来回答问题，从而实现基于私有知识库的问答功能。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 import asyncio
 from google.genai import types
 from google.adk import agents
@@ -3553,16 +3604,16 @@ if __name__ == "__main__":
                print("检测到正在一个已存在的事件循环中运行，跳过执行。")
            else:
                raise e
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 import asyncio
 from google.genai import types
 from google.adk import agents
@@ -3656,7 +3707,7 @@ if __name__ == "__main__":
                print("检测到正在一个已存在的事件循环中运行，跳过执行。")
            else:
                raise e
-```
+````
 ]
 
 该脚本提供了一个基础框架，用于构建一个能够利用 Vertex AI Search 进行企业知识库问答的对话式 AI 应用。
@@ -3745,12 +3796,12 @@ Extension 与普通函数调用的核心区别在于执行方式：Vertex AI 会
 以下代码将演示如何使用 CrewAI 框架来实现“规划”模式。在该模式中，一个智能体被明确地指示，在解决复杂请求时，首先要制定一个多步骤的计划，然后再依据该计划顺序地执行。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 import os
 from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process
@@ -3805,16 +3856,16 @@ print("## 开始执行“规划与写作”任务...")
 result = crew.kickoff()
 print("\n\n---\n## 任务最终成果 ##\n---")
 print(result)
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 import os
 from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process
@@ -3869,7 +3920,7 @@ print("## 开始执行“规划与写作”任务...")
 result = crew.kickoff()
 print("\n\n---\n## 任务最终成果 ##\n---")
 print(result)
-```
+````
 ]
 
 该代码使用 CrewAI 库，创建了一个能够先“规划”后“写作”的 AI 智能体。其核心逻辑在于如何通过Task的定义来引导智能体遵循“规划”模式。
@@ -3929,12 +3980,12 @@ Deep Research API 的价值在于，它将以往需要数小时人工投入的�
 要使用该 API，开发者需要向client.responses.create端点发送请求，其中需指定模型、输入提示词以及智能体可用的工具。输入内容通常包含一个system\_message（用于定义智能体的角色和期望的输出格式）和一个user\_query（用户的具体研究问题）。此外，请求中必须包含web\_search\_preview工具，并可选择性地添加code\_interpreter（代码解释器）或用于内部数据的自定义 MCP 工具。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from openai import OpenAI
 
 # 使用您的 API 密钥初始化客户端
@@ -4020,16 +4071,16 @@ try:
     print(f"  {code_step.output}")
 except StopIteration:
     print("\n未找到“代码执行”步骤。")
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from openai import OpenAI
 
 # 使用您的 API 密钥初始化客户端
@@ -4115,7 +4166,7 @@ try:
     print(f"  {code_step.output}")
 except StopIteration:
     print("\n未找到“代码执行”步骤。")
-```
+````
 ]
 
 该代码片段利用 OpenAI API 来执行一次“深度研究”任务，其核心逻辑可分解为以下几个部分：
@@ -4215,12 +4266,12 @@ API 调用成功后，代码首先从响应response对象中提取并打印出�
 下面的 Python 代码使用 CrewAI 框架，定义了一个由 AI 驱动的“Crew”，用以协作生成一篇关于 AI 趋势的博客文章。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 import os
 from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process
@@ -4296,16 +4347,16 @@ def main():
 
 if __name__ == "__main__":
     main()
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 import os
 from dotenv import load_dotenv
 from crewai import Agent, Task, Crew, Process
@@ -4381,7 +4432,7 @@ def main():
 
 if __name__ == "__main__":
     main()
-```
+````
 ]
 
 该脚本的核心是构建一个由两个智能体协作完成“研究并写作”任务的自动化流程。
@@ -4409,12 +4460,12 @@ Crew对象将所有的agents和tasks组织在一起。process=Process.sequential
 以下代码示例演示了如何在谷歌 ADK 框架内，通过定义父子关系来构建一个层级式的智能体架构。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from google.adk.agents import LlmAgent, BaseAgent
 from google.adk.agents.invocation_context import InvocationContext
 from google.adk.events import Event
@@ -4463,16 +4514,16 @@ assert greeter.parent_agent == coordinator
 assert task_doer.parent_agent == coordinator
 
 print("智能体层级结构已成功创建。")
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from google.adk.agents import LlmAgent, BaseAgent
 from google.adk.agents.invocation_context import InvocationContext
 from google.adk.events import Event
@@ -4521,7 +4572,7 @@ assert greeter.parent_agent == coordinator
 assert task_doer.parent_agent == coordinator
 
 print("智能体层级结构已成功创建。")
-```
+````
 ]
 
 该代码的核心是展示如何在 ADK 中创建和组织一个包含不同类型智能体的层级结构。
@@ -4541,12 +4592,12 @@ print("智能体层级结构已成功创建。")
 关键在于，通过sub\_agents=\[greeter, task\_doer\]参数，将前两个智能体指定为coordinator的子智能体，从而构建起一个“协调器-执行者”的层级。coordinator的instruction也明确指示了它应如何将任务委托给这两个子智能体。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 import asyncio
 from typing import AsyncGenerator
 from google.adk.agents import LoopAgent, LlmAgent, BaseAgent
@@ -4589,16 +4640,16 @@ poller = LoopAgent(
        ConditionChecker() # 实例化自定义的条件检查智能体
    ]
 )
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 import asyncio
 from typing import AsyncGenerator
 from google.adk.agents import LoopAgent, LlmAgent, BaseAgent
@@ -4641,7 +4692,7 @@ poller = LoopAgent(
        ConditionChecker() # 实例化自定义的条件检查智能体
    ]
 )
-```
+````
 ]
 
 该代码阐释了如何利用 ADK 框架中的 LoopAgent 来构建一个能够循环执行、直到满足特定条件才停止的迭代式工作流。根据描述，其实现逻辑如下：
@@ -4661,12 +4712,12 @@ poller是一个LoopAgent实例，它像一个容器，按顺序 (sub\_agents列�
 当poller运行时，它会重复执行“process\_step→ConditionChecker”这个序列，直到ConditionChecker检测到status变为completed或循环达到10次为止。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from google.adk.agents import Agent, ParallelAgent
 
 # 最佳实践是将具体行为封装为工具，但为简化本示例，我们将逻辑直接写入智能体的指令中。
@@ -4697,16 +4748,16 @@ data_gatherer = ParallelAgent(
        news_fetcher
    ]
 )
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from google.adk.agents import Agent, ParallelAgent
 
 # 最佳实践是将具体行为封装为工具，但为简化本示例，我们将逻辑直接写入智能体的指令中。
@@ -4737,7 +4788,7 @@ data_gatherer = ParallelAgent(
        news_fetcher
    ]
 )
-```
+````
 ]
 
 该代码片段阐释了谷歌ADK内的“智能体即工具”范式，使一个智能体能够以一种类似于函数调用的方式利用另一个智能体的能力。
@@ -4755,12 +4806,12 @@ data\_gatherer是一个ParallelAgent实例，它在其sub\_agents列表中包含
 当data\_gatherer运行时，它会同时启动weather\_fetcher和news\_fetcher，而不是按顺序执行。它会等待所有子智能体都完成后，整个并行任务才算结束。此时，两个子智能体的结果已分别存入了会话状态的weather\_data和news\_data键中，可供后续的智能体使用。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from google.adk.agents import LlmAgent
 from google.adk.tools import agent_tool
 from google.genai import types
@@ -4815,16 +4866,16 @@ artist_agent = LlmAgent(
        "然后，使用 `ImageGen` 工具，并传入你构思的提示词来生成图片。"
    ),
    tools=[image_tool]
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from google.adk.agents import LlmAgent
 from google.adk.tools import agent_tool
 from google.genai import types
@@ -4879,7 +4930,7 @@ artist_agent = LlmAgent(
        "然后，使用 `ImageGen` 工具，并传入你构思的提示词来生成图片。"
    ),
    tools=[image_tool]
-```
+````
 ]
 
 该示例巧妙地构建了一个分层的智能体系统，其核心是“将一个智能体封装成另一个智能体的工具”。
@@ -4951,7 +5002,7 @@ artist_agent = LlmAgent(
 
 #pagebreak(weak: true)
 
-= 【AI Agent开发书籍】《智能体设计模式：构建智能系统的实践指南》（第二、三部分）
+= 《智能体设计模式：构建智能系统的实践指南》（第二、三部分）
 
 10月初，谷歌资深工程主管、杰出工程师Antonio Gulli免费公开发布了一本长达400多页的新书——《Agentic Design Patterns: A Hands-On Guide to Building Intelligent Systems》。该书旨在为当前火热的AI Agent开发领域提供首批系统性的“设计模式”，更有条理地构建强大、可靠的智能系统。
 
@@ -5019,42 +5070,42 @@ Session：追踪每一次聊天
 开发者通常通过 SessionService 间接操作 Session 对象。SessionService 负责管理对话会话的整个生命周期，包括：创建新会话、恢复历史会话、记录会话活动 (含状态更新)、识别活动会话以及管理会话数据的删除。ADK 提供了多种 SessionService 的实现，它们采用不同的存储机制来保存会话历史和临时数据，例如InMemorySessionService，它适合测试场景，但数据在应用重启后会丢失。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # 示例：使用 InMemorySessionService
 # 适用于本地开发和测试，无需在应用重启后持久化数据。
 from google.adk.sessions import InMemorySessionService
 session_service = InMemorySessionService()
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # 示例：使用 InMemorySessionService
 # 适用于本地开发和测试，无需在应用重启后持久化数据。
 from google.adk.sessions import InMemorySessionService
 session_service = InMemorySessionService()
-```
+````
 ]
 
 其次是DatabaseSessionService，如果你希望将数据可靠地存入自己管理的数据库。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # 示例：使用 DatabaseSessionService
 # 适用于需要持久化存储的生产或开发环境。
 # 你需要配置一个数据库 URL (例如, 用于 SQLite, PostgreSQL 等)。
@@ -5063,16 +5114,16 @@ from google.adk.sessions import DatabaseSessionService
 # 使用本地 SQLite 文件的示例:
 db_url = "sqlite:///./my_agent_data.db"
 session_service = DatabaseSessionService(db_url=db_url)
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # 示例：使用 DatabaseSessionService
 # 适用于需要持久化存储的生产或开发环境。
 # 你需要配置一个数据库 URL (例如, 用于 SQLite, PostgreSQL 等)。
@@ -5081,18 +5132,18 @@ from google.adk.sessions import DatabaseSessionService
 # 使用本地 SQLite 文件的示例:
 db_url = "sqlite:///./my_agent_data.db"
 session_service = DatabaseSessionService(db_url=db_url)
-```
+````
 ]
 
 此外，还有 VertexAiSessionService，它利用 Vertex AI 的基础设施，为部署在 Google Cloud 上的应用提供可扩展的生产级支持。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # 示例：使用 VertexAiSessionService
 # 适用于 Google Cloud Platform 上的可扩展生产环境，利用
 # Vertex AI 基础设施进行会话管理。
@@ -5110,16 +5161,16 @@ session_service = VertexAiSessionService(project=PROJECT_ID, location=LOCATION)
 # session_service.get_session(app_name=REASONING_ENGINE_APP_NAME, ...)
 # session_service.append_event(session, event, app_name=REASONING_ENGINE_APP_NAME)
 # session_service.delete_session(app_name=REASONING_ENGINE_APP_NAME, ...)
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # 示例：使用 VertexAiSessionService
 # 适用于 Google Cloud Platform 上的可扩展生产环境，利用
 # Vertex AI 基础设施进行会话管理。
@@ -5137,7 +5188,7 @@ session_service = VertexAiSessionService(project=PROJECT_ID, location=LOCATION)
 # session_service.get_session(app_name=REASONING_ENGINE_APP_NAME, ...)
 # session_service.append_event(session, event, app_name=REASONING_ENGINE_APP_NAME)
 # session_service.delete_session(app_name=REASONING_ENGINE_APP_NAME, ...)
-```
+````
 ]
 
 选择合适的 SessionService 至关重要，因为它直接决定了智能体交互历史和临时数据的存储方式及其持久性。
@@ -5167,12 +5218,12 @@ state的数据结构由字符串类型的键，以及可序列化的 Python 类�
 如果开发者的目标仅仅是将智能体最终的文本回复直接存入state，使用output\_key是最简单的方法。在设置LlmAgent时，只需为其指定一个output\_key即可。执行器会识别这个设置，并在追加事件时自动创建必要的动作，将回复内容保存到state中。以下代码示例演示了如何通过output\_key更新state。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # 从 Google 智能体开发工具包 (ADK) 导入必要的类
 from google.adk.agents import LlmAgent
 from google.adk.sessions import InMemorySessionService, Session
@@ -5218,16 +5269,16 @@ for event in runner.run(
 # 在 runner 完成所有事件处理后，再检查状态才是正确的做法
 updated_session = session_service.get_session(app_name, user_id, session_id)
 print(f"\n智能体运行后的状态: {updated_session.state}")
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # 从 Google 智能体开发工具包 (ADK) 导入必要的类
 from google.adk.agents import LlmAgent
 from google.adk.sessions import InMemorySessionService, Session
@@ -5273,7 +5324,7 @@ for event in runner.run(
 # 在 runner 完成所有事件处理后，再检查状态才是正确的做法
 updated_session = session_service.get_session(app_name, user_id, session_id)
 print(f"\n智能体运行后的状态: {updated_session.state}")
-```
+````
 ]
 
 其内部原理是，runner检测到output\_key的设置，于是在调用append\_event时，会自动创建一个包含状态增量 (state\_delta) 的必要动作，从而完成对state的更新。
@@ -5283,12 +5334,12 @@ print(f"\n智能体运行后的状态: {updated_session.state}")
 对于更复杂的场景——例如，需要一次性更新多个键、保存非文本类型的数据、指定user:或app:等作用域、或执行与智能体最终文本回复无关的更新——开发者需要手动构建一个包含状态变更的字典（即state\_delta），并将其包含在要追加的事件的EventActions内部。以下是一个示例：
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 import time
 from google.adk.tools.tool_context import ToolContext
 from google.adk.sessions import InMemorySessionService
@@ -5356,16 +5407,16 @@ print(f"工具执行后的状态: {updated_session.state}")
 
 # 预期输出将显示与之前案例相同的状态变化，
 # 但此处的代码组织显著地更清晰、更健壮。
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 import time
 from google.adk.tools.tool_context import ToolContext
 from google.adk.sessions import InMemorySessionService
@@ -5433,7 +5484,7 @@ print(f"工具执行后的状态: {updated_session.state}")
 
 # 预期输出将显示与之前案例相同的状态变化，
 # 但此处的代码组织显著地更清晰、更健壮。
-```
+````
 ]
 
 这段代码演示了在应用中管理用户会话状态的一种基于工具的方法。它定义了一个log\_user\_login函数，该函数作为一个工具，负责在用户登录时更新会话状态。
@@ -5455,33 +5506,33 @@ Memory：通过 MemoryService 实现长期知识管理
 在智能体系统中，会话（Session）组件负责维护当前对话的聊天历史（events）和临时数据（state）。然而，要让智能体能够跨越多次交互来保留信息，或访问外部数据，就需要进行长期知识管理。这一功能由MemoryService来实现。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # 示例：使用 InMemoryMemoryService
 # 适用于本地开发和测试，无需在应用重启后持久化数据。
 # 应用停止后，内存中的内容将会丢失。
 from google.adk.memory import InMemoryMemoryService
 memory_service = InMemoryMemoryService()
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # 示例：使用 InMemoryMemoryService
 # 适用于本地开发和测试，无需在应用重启后持久化数据。
 # 应用停止后，内存中的内容将会丢失。
 from google.adk.memory import InMemoryMemoryService
 memory_service = InMemoryMemoryService()
-```
+````
 ]
 
 可以将Session和State理解为单次聊天的短期记忆，而由MemoryService管理的长期知识则扮演着一个持久化、可搜索的知识库的角色。这个知识库可以包含来自多次历史交互或外部数据源的信息。
@@ -5494,12 +5545,12 @@ MemoryService 遵循BaseMemoryService接口所定义的标准，为管理这种�
 ADK 提供了多种用于创建长期知识库的实现。InMemoryMemoryService提供了一种临时的记忆存储方案，适合测试用途，但数据在应用重启后会丢失。对于生产环境，通常采用VertexAiRagMemoryService。该服务利用 Google Cloud 的 RAG  服务，能够提供可扩展、持久化且支持语义搜索的强大能力。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # 示例：使用 VertexAiRagMemoryService
 # 适用于 GCP 上的可扩展生产环境，利用 Vertex AI RAG (检索增强生成)
 # 实现持久化、可搜索的记忆。
@@ -5522,16 +5573,16 @@ memory_service = VertexAiRagMemoryService(
 
 # 使用此服务时, `add_session_to_memory` 和 `search_memory` 等方法
 # 将会与指定的 Vertex AI RAG Corpus 进行交互。
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # 示例：使用 VertexAiRagMemoryService
 # 适用于 GCP 上的可扩展生产环境，利用 Vertex AI RAG (检索增强生成)
 # 实现持久化、可搜索的记忆。
@@ -5554,7 +5605,7 @@ memory_service = VertexAiRagMemoryService(
 
 # 使用此服务时, `add_session_to_memory` 和 `search_memory` 等方法
 # 将会与指定的 Vertex AI RAG Corpus 进行交互。
-```
+````
 ]
 
 代码实战：LangChain 与 LangGraph 中的记忆管理
@@ -5571,12 +5622,12 @@ ChatMessageHistory：手动记忆管理
 如果需要在正式的 Chain 之外对对话历史进行直接、简单的控制，ChatMessageHistory类是理想的选择。它允许开发者手动追踪对话的交互过程。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from langchain.memory import ChatMessageHistory
 
 # 初始化历史记录对象
@@ -5588,16 +5639,16 @@ history.add_ai_message("太好了！那是个很棒的城市。")
 
 # 访问消息列表
 print(history.messages)
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from langchain.memory import ChatMessageHistory
 
 # 初始化历史记录对象
@@ -5609,7 +5660,7 @@ history.add_ai_message("太好了！那是个很棒的城市。")
 
 # 访问消息列表
 print(history.messages)
-```
+````
 ]
 
 ConversationBufferMemory：在 Chain 中自动集成的记忆
@@ -5620,12 +5671,12 @@ ConversationBufferMemory：在 Chain 中自动集成的记忆
 - return\_messages：一个布尔值，用于决定历史记录的返回格式。若为False(默认值)，历史记录将作为一个格式化后的字符串返回，适合标准的 LLM；若为True，则返回一个消息对象的列表，这是 Chat Models 的推荐格式。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from langchain.memory import ConversationBufferMemory
 
 # 初始化记忆对象
@@ -5636,16 +5687,16 @@ memory.save_context({"input": "今天天气怎么样？"}, {"output": "今天阳
 
 # 以字符串形式加载记忆变量
 print(memory.load_memory_variables({}))
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from langchain.memory import ConversationBufferMemory
 
 # 初始化记忆对象
@@ -5656,18 +5707,18 @@ memory.save_context({"input": "今天天气怎么样？"}, {"output": "今天阳
 
 # 以字符串形式加载记忆变量
 print(memory.load_memory_variables({}))
-```
+````
 ]
 
 将记忆集成到LLMChain中，可以使模型能够访问对话历史，从而给出与上下文相关的回复。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from langchain_openai import OpenAI
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
@@ -5698,16 +5749,16 @@ response = conversation.predict(question="顺便说一下，我叫 Sam。")
 print(response)
 response = conversation.predict(question="我刚才说我叫什么名字？")
 print(response)
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from langchain_openai import OpenAI
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
@@ -5738,18 +5789,18 @@ response = conversation.predict(question="顺便说一下，我叫 Sam。")
 print(response)
 response = conversation.predict(question="我刚才说我叫什么名字？")
 print(response)
-```
+````
 ]
 
 为了更高效地配合聊天模型使用，建议设置return\_messages=True，以返回结构化的消息对象列表。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from langchain_openai import ChatOpenAI
 from langchain.chains import LLMChain
 from langchain.memory import ConversationBufferMemory
@@ -5782,16 +5833,16 @@ response = conversation.predict(question="你好，我叫 Jane。")
 print(response)
 response = conversation.predict(question="你还记得我的名字吗？")
 print(response)
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from langchain_openai import ChatOpenAI
 from langchain.chains import LLMChain
 from langchain.memory import ConversationBufferMemory
@@ -5824,7 +5875,7 @@ response = conversation.predict(question="你好，我叫 Jane。")
 print(response)
 response = conversation.predict(question="你还记得我的名字吗？")
 print(response)
-```
+````
 ]
 
 长期记忆的类型
@@ -5838,12 +5889,12 @@ print(response)
 以下伪代码演示了智能体如何利用“反思”机制，来更新其存储在 LangGraphBaseStore中的程序记忆。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # 用于更新智能体指令的节点 (Node)
 def update_instructions(state: State, store: BaseStore):
    namespace = ("instructions",)
@@ -5873,16 +5924,16 @@ def call_model(state: State, store: BaseStore):
    # 使用检索到的指令来格式化提示词
    prompt = prompt_template.format(instructions=instructions.value["instructions"])
    # ... 后续应用逻辑
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # 用于更新智能体指令的节点 (Node)
 def update_instructions(state: State, store: BaseStore):
    namespace = ("instructions",)
@@ -5912,18 +5963,18 @@ def call_model(state: State, store: BaseStore):
    # 使用检索到的指令来格式化提示词
    prompt = prompt_template.format(instructions=instructions.value["instructions"])
    # ... 后续应用逻辑
-```
+````
 ]
 
 在 LangGraph 中，长期记忆以 JSON 文档的形式保存在一个存储区（store）中。每个记忆都通过自定义的命名空间和唯一的键值进行组织。这种层级结构使得信息的组织和检索变得十分便捷。以下代码演示了如何使用InMemoryStore来存入、获取和搜索记忆。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from langgraph.store.memory import InMemoryStore
 
 # 用于替代真实向量 (embedding) 函数的占位符
@@ -5964,16 +6015,16 @@ items = store.search(
     query="语言偏好"
 )
 print("搜索结果:", items)
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from langgraph.store.memory import InMemoryStore
 
 # 用于替代真实向量 (embedding) 函数的占位符
@@ -6014,7 +6065,7 @@ items = store.search(
     query="语言偏好"
 )
 print("搜索结果:", items)
-```
+````
 ]
 
 ==== Vertex Memory Bank
@@ -6026,12 +6077,12 @@ Memory Bank是 Vertex AI Agent Engine 中集成的一项托管服务，为智能
 智能体的runner会与预先初始化的VertexAiMemoryBankService进行交互。该服务负责自动将在对话过程中生成的记忆进行存储。每一条记忆都会被标记上唯一的USER\_ID和APP\_NAME，以确保未来能够被准确检索。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from google.adk.memory import VertexAiMemoryBankService
 
 agent_engine_id = agent_engine.api_resource.name.split("/")[-1]
@@ -6048,16 +6099,16 @@ session = await session_service.get_session(
 )
 
 await memory_service.add_session_to_memory(session)
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from google.adk.memory import VertexAiMemoryBankService
 
 agent_engine_id = agent_engine.api_resource.name.split("/")[-1]
@@ -6074,7 +6125,7 @@ session = await session_service.get_session(
 )
 
 await memory_service.add_session_to_memory(session)
-```
+````
 ]
 
 Memory Bank 与 Google ADK 无缝集成，提供了开箱即用的便捷体验。对于使用其他智能体框架（如 LangGraph、CrewAI）的开发者，Memory Bank 也支持通过直接调用 API 的方式进行集成。官方提供了相关的在线代码示例，以供感兴趣的读者参考。
@@ -6235,12 +6286,12 @@ OpenEvolve 的一个关键特性是它能够对整个代码文件进行演进，
 下方的代码片段展示了如何使用 OpenEvolve 库对程序进行进化优化。首先，通过指定初始程序、评估脚本和配置文件的路径来初始化 OpenEvolve 系统。接着，evolve.run(iterations=1000)启动进化流程，运行 1000 次迭代以寻找更优的程序版本。最后，代码会输出在进化过程中找到的最佳程序的各项性能指标，并格式化为四位小数。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from openevolve import OpenEvolve
 
 # 初始化系统
@@ -6256,16 +6307,16 @@ best_program = await evolve.run(iterations=1000)
 print(f"最佳程序的性能指标:")
 for name, value in best_program.metrics.items():
     print(f"  {name}: {value:.4f}")
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from openevolve import OpenEvolve
 
 # 初始化系统
@@ -6281,7 +6332,7 @@ best_program = await evolve.run(iterations=1000)
 print(f"最佳程序的性能指标:")
 for name, value in best_program.metrics.items():
     print(f"  {name}: {value:.4f}")
-```
+````
 ]
 
 ==== 本章速览
@@ -6407,12 +6458,12 @@ MCP 极大地扩展了 AI/LLM 的能力边界，使其功能更强大、应用�
 关键步骤是，必须将args列表中的占位符路径"/path/to/your/folder"替换为 MCP 服务器可以访问的、本地文件系统的绝对路径。该目录将作为智能体执行所有文件系统操作的根目录。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 import os
 from google.adk.agents import LlmAgent
 from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioServerParameters
@@ -6449,16 +6500,16 @@ root_agent = LlmAgent(
        )
    ],
 )
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 import os
 from google.adk.agents import LlmAgent
 from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioServerParameters
@@ -6495,7 +6546,7 @@ root_agent = LlmAgent(
        )
    ],
 )
-```
+````
 ]
 
 npx（Node Package Execute）是一个与npm 5.2.0及以上版本一同发布的实用工具。它允许开发者直接从 npm 注册表执行 Node.js 包，而无需在全局环境中安装它们。本质上，npx是一个 npm 包的运行器，许多以 Node.js 包形式发布的社区 MCP 服务器都常通过npx来启动。
@@ -6503,38 +6554,38 @@ npx（Node Package Execute）是一个与npm 5.2.0及以上版本一同发布的
 为了确保agent.py文件能被谷歌 ADK 识别为可发现 Python 包的一部分，创建\_\_init\_\_.py文件是必要步骤。该文件应与agent.py位于同一目录下。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # ./adk_agent_samples/mcp_agent/__init__.py
 from . import agent
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # ./adk_agent_samples/mcp_agent/__init__.py
 from . import agent
-```
+````
 ]
 
 此外，也支持使用其他命令来启动 MCP 服务器。例如，可以通过以下方式连接到一个python3启动的服务器：
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 connection_params = StdioConnectionParams(
  server_params={
      "command": "python3",
@@ -6545,16 +6596,16 @@ connection_params = StdioConnectionParams(
      }
  }
 )
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 connection_params = StdioConnectionParams(
  server_params={
      "command": "python3",
@@ -6565,18 +6616,18 @@ connection_params = StdioConnectionParams(
      }
  }
 )
-```
+````
 ]
 
 在 Python 生态中，UVX是一个命令行工具，它利用uv在一个临时的、隔离的 Python 环境中执行命令。这使得用户无需在全局或项目环境中安装 Python 包即可直接运行它们。可以通过 MCP 服务器来调用它：
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 connection_params = StdioConnectionParams(
     server_params={
         "command": "uvx",
@@ -6587,16 +6638,16 @@ connection_params = StdioConnectionParams(
         }
     }
 )
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 connection_params = StdioConnectionParams(
     server_params={
         "command": "uvx",
@@ -6607,7 +6658,7 @@ connection_params = StdioConnectionParams(
         }
     }
 )
-```
+````
 ]
 
 一旦 MCP 服务器被成功创建，下一步便是连接到该服务器。
@@ -6617,27 +6668,27 @@ connection_params = StdioConnectionParams(
 首先，启动 ADK 的网页界面。请在终端中，切换到mcp\_agent所在的上级目录（例如adk\_agent\_samples），然后运行以下命令：
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 cd ./adk_agent_samples # 或其他包含您 agent 的上级目录
 adk web
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 cd ./adk_agent_samples # 或其他包含您 agent 的上级目录
 adk web
-```
+````
 ]
 
 当 ADK Web UI 在浏览器中加载后，从智能体下拉菜单中选择filesystem\_assistant\_agent。接下来，可以尝试使用如下提示词进行交互：
@@ -6659,12 +6710,12 @@ FastMCP 是一个旨在简化 MCP 服务器开发流程的高级 Python 框架�
 为了演示，创建一个由服务器提供的、名为greet的基础工具。一旦服务启动，ADK 智能体及其他 MCP 客户端便可通过 HTTP 协议与该工具进行交互。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # fastmcp_server.py
 # 本脚本演示如何使用 FastMCP 创建一个简单的 MCP 服务器。
 # 该服务器会暴露一个用于生成问候语的工具。
@@ -6699,16 +6750,16 @@ if __name__ == "__main__":
         host="127.0.0.1",
         port=8000
     )
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # fastmcp_server.py
 # 本脚本演示如何使用 FastMCP 创建一个简单的 MCP 服务器。
 # 该服务器会暴露一个用于生成问候语的工具。
@@ -6743,7 +6794,7 @@ if __name__ == "__main__":
         host="127.0.0.1",
         port=8000
     )
-```
+````
 ]
 
 上述 Python 脚本定义了一个名为greet的函数，它接收一个姓名作为输入，并返回一句个性化的问-候语。函数上方的\@mcp\_server.tool装饰器会自动将其注册为一个可供 AI 或其他程序调用的工具。FastMCP 会利用该函数的文档字符串和类型提示，向智能体说明此工具的用途、所需输入及其返回值。
@@ -6759,12 +6810,12 @@ if __name__ == "__main__":
 要完成此项配置，需要创建一个智能体定义文件（例如，位于./adk\_agent\_samples/fastmcp\_client\_agent/目录下的agent.py）。该文件将实例化一个 ADK 智能体，并使用HttpServerParameters来建立与运行中的 FastMCP 服务器的连接。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # ./adk_agent_samples/fastmcp_client_agent/agent.py
 import os
 from google.adk.agents import LlmAgent
@@ -6789,16 +6840,16 @@ root_agent = LlmAgent(
        )
    ],
 )
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # ./adk_agent_samples/fastmcp_client_agent/agent.py
 import os
 from google.adk.agents import LlmAgent
@@ -6823,7 +6874,7 @@ root_agent = LlmAgent(
        )
    ],
 )
-```
+````
 ]
 
 该脚本定义了一个名为fastmcp\_greeter\_agent的智能体，它使用 Gemini 语言模型。它被赋予了一条明确的指令：作为一个友好的助手，根据姓名问候他人。关键在于，代码为该智能体配备了执行其任务所需的工具——它配置了一个MCPToolset，以连接到在localhost:8000上运行的独立服务器（即前一示例中的 FastMCP 服务器），并被明确授予了调用该服务器上greet工具的权限。
@@ -6893,25 +6944,25 @@ MCP 是一项旨在促进 LLM 与外部系统通信的开放标准。它采用�
 智能体任务是否成功，由其自身通过 AI 驱动的判断来衡量——即判断所生成的代码是否已满足初始设定的目标。最终，它将输出一个经过反复打磨、带有注释且可直接使用的 Python 文件，作为整个优化过程的最终成果。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 pip install langchain_openai openai python-dotenv
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 pip install langchain_openai openai python-dotenv
-```
+````
 ]
 
 同时，需要在项目根目录下创建一个.env文件，并包含OPENAI\_API\_KEY及其对应的值。
@@ -6921,12 +6972,12 @@ pip install langchain_openai openai python-dotenv
 整个流程始于向这个 AI 程序员递交一份详细的“项目需求书”，也就是它需要解决的具体编码问题。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # MIT 许可证
 # 版权所有 (c) 2025 Mahtab Syed
 # https://www.linkedin.com/in/mahtabsyed/
@@ -7127,16 +7178,16 @@ if __name__ == "__main__":
    # use_case_input = "编写代码，接收一个 Word (.doc 或 .docx) 文件的命令行输入，打开文件并统计其中的单词数和字符数，最后打印所有统计结果"
    # goals_input = "代码易于理解, 功能正确, 处理边界情况"
    # run_code_agent(use_case_input, goals_input)
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # MIT 许可证
 # 版权所有 (c) 2025 Mahtab Syed
 # https://www.linkedin.com/in/mahtabsyed/
@@ -7337,7 +7388,7 @@ if __name__ == "__main__":
    # use_case_input = "编写代码，接收一个 Word (.doc 或 .docx) 文件的命令行输入，打开文件并统计其中的单词数和字符数，最后打印所有统计结果"
    # goals_input = "代码易于理解, 功能正确, 处理边界情况"
    # run_code_agent(use_case_input, goals_input)
-```
+````
 ]
 
 除了这份“项目需求书”，开发者还会提供一份严格的质量清单，该清单明确了最终代码必须达成的各项目标——例如“解决方案必须简洁”、“功能必须完全正确”或“代码需要处理意料之外的边界情况”等标准。
@@ -7460,12 +7511,12 @@ if __name__ == "__main__":
 异常处理与恢复机制对于保障系统的鲁棒性与可靠性至关重要。例如，智能体需要能够妥善应对失败的工具调用。这类失败可能源于错误的工具输入，或是工具所依赖的外部服务出现了问题。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from google.adk.agents import Agent, SequentialAgent
 
 # 智能体 1：尝试主工具。其任务单一且明确。
@@ -7508,16 +7559,16 @@ robust_location_agent = SequentialAgent(
     name="robust_location_agent",
     sub_agents=[primary_handler, fallback_handler, response_agent]
 )
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from google.adk.agents import Agent, SequentialAgent
 
 # 智能体 1：尝试主工具。其任务单一且明确。
@@ -7560,7 +7611,7 @@ robust_location_agent = SequentialAgent(
     name="robust_location_agent",
     sub_agents=[primary_handler, fallback_handler, response_agent]
 )
-```
+````
 ]
 
 上述代码通过 ADK 的SequentialAgent将三个子智能体 组合起来，定义了一个具有鲁棒性的位置信息检索系统。
@@ -7663,12 +7714,12 @@ HITL 模式包含以下几个关键方面：
 为演示 HITL 模式，ADK 智能体可以被设计为能够识别需要人类审查的场景，并启动上报流程（escalation process）。该机制允许在智能体自主决策能力有限或需要复杂判断时，引入人工干预。这并非 ADK 独有的功能，其他主流框架（如 LangChain）也提供了实现此类交互的工具。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from google.adk.agents import Agent
 from google.adk.tools.tool_context import ToolContext
 from google.adk.callbacks import CallbackContext
@@ -7740,16 +7791,16 @@ def personalization_callback(
            llm_request.contents.insert(0, system_content)
            
    return None  # 返回 None 表示继续使用修改后的请求
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from google.adk.agents import Agent
 from google.adk.tools.tool_context import ToolContext
 from google.adk.callbacks import CallbackContext
@@ -7821,7 +7872,7 @@ def personalization_callback(
            llm_request.contents.insert(0, system_content)
            
    return None  # 返回 None 表示继续使用修改后的请求
-```
+````
 ]
 
 上述代码为使用 Google ADK 构建一个围绕 HITL 框架的技术支持智能体，提供了一个设计蓝图。该智能体作为智能化的一线支持，被赋予了明确的指令，并配备了troubleshoot\_issue、create\_ticket和escalate\_to\_human等工具，使其能够管理完整的支持工作流。其中的上报工具 (escalate\_to\_human) 正是 HITL 设计的核心，它确保了复杂或敏感的案例能够被顺利转交给人类专家处理。
@@ -7972,12 +8023,12 @@ RAG 正在改变 LLM 在各行各业的应用方式，显著增强了它们提�
 该展示如何使用 Google Search 来实现 RAG，并使 LLM 的回答以搜索结果为依据。由于 RAG 的核心在于访问外部信息，Google Search 工具本身就是一个内置的、能够有效扩充 LLM 知识的检索机制。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from google.adk.tools import google_search
 from google.adk.agents import Agent
 
@@ -7987,16 +8038,16 @@ search_agent = Agent(
     instruction="你的任务是帮助用户研究课题。当被提问时，请使用 Google Search 工具。",
     tools=[google_search]
 )
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from google.adk.tools import google_search
 from google.adk.agents import Agent
 
@@ -8006,7 +8057,7 @@ search_agent = Agent(
     instruction="你的任务是帮助用户研究课题。当被提问时，请使用 Google Search 工具。",
     tools=[google_search]
 )
-```
+````
 ]
 
 - 示例二
@@ -8016,12 +8067,12 @@ search_agent = Agent(
 这些参数会影响检索过程：SIMILARITY\_TOP\_K定义了要检索的最相似结果的数量；VECTOR\_DISTANCE\_THRESHOLD则为检索结果的语义距离设定了上限。完成此设置后，智能体便能够从指定的 RAG 语料库中执行可扩展、持久化的语义知识检索。整个过程有效地将 Google Cloud 的 RAG 功能集成到了 ADK 智能体中，为开发基于事实数据生成回答的应用提供了支持。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # 从 google.adk.memory 模块导入必需的 VertexAiRagMemoryService 类
 from google.adk.memory import VertexAiRagMemoryService
 
@@ -8047,16 +8098,16 @@ memory_service = VertexAiRagMemoryService(
     similarity_top_k=SIMILARITY_TOP_K,
     vector_distance_threshold=VECTOR_DISTANCE_THRESHOLD
 )
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # 从 google.adk.memory 模块导入必需的 VertexAiRagMemoryService 类
 from google.adk.memory import VertexAiRagMemoryService
 
@@ -8082,7 +8133,7 @@ memory_service = VertexAiRagMemoryService(
     similarity_top_k=SIMILARITY_TOP_K,
     vector_distance_threshold=VECTOR_DISTANCE_THRESHOLD
 )
-```
+````
 ]
 
 ==== 代码实战示例（LangChain）
@@ -8092,12 +8143,12 @@ memory_service = VertexAiRagMemoryService(
 逐步解析一个使用 LangChain 的完整示例。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 import os
 import requests
 from typing import List, Dict, Any, TypedDict
@@ -8227,16 +8278,16 @@ if __name__ == "__main__":
     inputs_2 = {"question": query_2}
     for s in app.stream(inputs_2):
         print(s)
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 import os
 import requests
 from typing import List, Dict, Any, TypedDict
@@ -8366,7 +8417,7 @@ if __name__ == "__main__":
     inputs_2 = {"question": query_2}
     for s in app.stream(inputs_2):
         print(s)
-```
+````
 ]
 
 这段 Python 代码展示了如何使用 LangChain 和 LangGraph 实现一个完整的 RAG 流水线。
@@ -8445,7 +8496,7 @@ if __name__ == "__main__":
 
 #pagebreak(weak: true)
 
-= 【AI Agent开发书籍】《智能体设计模式：构建智能系统的实践指南》（第四部分）
+= 《智能体设计模式：构建智能系统的实践指南》（第四部分）
 
 10月初，谷歌资深工程主管、杰出工程师Antonio Gulli免费公开发布了一本长达400多页的新书——《Agentic Design Patterns: A Hands-On Guide to Building Intelligent Systems》。该书旨在为当前火热的AI Agent开发领域提供首批系统性的“设计模式”，更有条理地构建强大、可靠的智能系统。
 
@@ -8476,12 +8527,12 @@ A2A 协议已获得众多科技公司和服务提供商的支持，其中包括 
 下方是一个天气机器人（WeatherBot）的智能体卡片示例。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 {
   "name": "WeatherBot",
   "description": "提供准确的天气预报和历史数据。",
@@ -8546,16 +8597,16 @@ A2A 协议已获得众多科技公司和服务提供商的支持，其中包括 
     }
   ]
 }
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 {
   "name": "WeatherBot",
   "description": "提供准确的天气预报和历史数据。",
@@ -8620,7 +8671,7 @@ A2A 协议已获得众多科技公司和服务提供商的支持，其中包括 
     }
   ]
 }
-```
+````
 ]
 
 智能体发现机制使得客户端能够找到并解析“智能体卡片”，从而了解可用 A2A 服务器所具备的功能。该过程可通过以下几种策略实现：
@@ -8653,12 +8704,12 @@ A2A 框架提供了多种交互机制以满足不同 AI 应用场景的需求，
 同步请求示例
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 {
   "jsonrpc": "2.0",
   "id": "1",
@@ -8681,16 +8732,16 @@ A2A 框架提供了多种交互机制以满足不同 AI 应用场景的需求，
     "historyLength": 5
   }
 }
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 {
   "jsonrpc": "2.0",
   "id": "1",
@@ -8713,7 +8764,7 @@ A2A 框架提供了多种交互机制以满足不同 AI 应用场景的需求，
     "historyLength": 5
   }
 }
-```
+````
 ]
 
 同步请求使用sendTask方法，客户端通过它来请求并期望一次性获得查询的完整答案。与之相对，流式请求则使用sendTaskSubscribe方法来建立一个持久连接，允许智能体在一段时间内发回多个增量更新或部分结果。
@@ -8721,12 +8772,12 @@ A2A 框架提供了多种交互机制以满足不同 AI 应用场景的需求，
 流式请求示例
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 {
   "jsonrpc": "2.0",
   "id": "2",
@@ -8749,16 +8800,16 @@ A2A 框架提供了多种交互机制以满足不同 AI 应用场景的需求，
     "historyLength": 5
   }
 }
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 {
   "jsonrpc": "2.0",
   "id": "2",
@@ -8781,7 +8832,7 @@ A2A 框架提供了多种交互机制以满足不同 AI 应用场景的需求，
     "historyLength": 5
   }
 }
-```
+````
 ]
 
 A2A 是系统架构中的关键一环，它能让各个智能体之间安全、无缝地交换数据。其内置的多种机制确保了通信的稳健性与完整性。
@@ -8814,12 +8865,12 @@ A2A 的核心目标在于提升效率、降低集成成本，并促进复杂多�
 代码来源于示例库中的日历规划智能体：https://github.com/google-a2a/a2a-samples/.../adk\_agent.py
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 import datetime
 from google.adk.agents import LlmAgent # type: ignore[import-untyped]
 from google.adk.tools.google_api_tool import CalendarToolset # type: ignore[import-untyped]
@@ -8845,16 +8896,16 @@ async def create_agent(client_id, client_secret) -> LlmAgent:
 """,
         tools=await toolset.get_tools(),
     )
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 import datetime
 from google.adk.agents import LlmAgent # type: ignore[import-untyped]
 from google.adk.tools.google_api_tool import CalendarToolset # type: ignore[import-untyped]
@@ -8880,7 +8931,7 @@ async def create_agent(client_id, client_secret) -> LlmAgent:
 """,
         tools=await toolset.get_tools(),
     )
-```
+````
 ]
 
 上述 Python 代码定义了一个异步函数create\_agent，用于构建一个基于 ADK 的LlmAgent。
@@ -8896,12 +8947,12 @@ async def create_agent(client_id, client_secret) -> LlmAgent:
 下文的代码展示了如何为智能体定义其具体指令和所用工具。需要说明的是，此处仅展示了阐释此功能所需的核心代码片段，完整文件请参阅：https://github.com/a2aproject/a2a-samples/.../main.py
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 def main(host: str, port: int):
     # 验证 API 密钥是否已设置。
     # (如果使用 Vertex AI API 则此项不是必需的)
@@ -8981,16 +9032,16 @@ def main(host: str, port: int):
 
 if __name__ == '__main__':
     main()
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 def main(host: str, port: int):
     # 验证 API 密钥是否已设置。
     # (如果使用 Vertex AI API 则此项不是必需的)
@@ -9070,7 +9121,7 @@ def main(host: str, port: int):
 
 if __name__ == '__main__':
     main()
-```
+````
 ]
 
 这段 Python 代码展示了如何搭建一个遵循 A2A 规范的“日历智能体”，该智能体能够通过 Google Calendar 查询用户的空闲时间。
@@ -9149,12 +9200,12 @@ Google 的 ADK 框架通过其多智能体架构为这种设计提供了原生�
 接下来，下方的示例代码将定义两个配置相同但模型和成本不同的智能体。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # 概念性的类 Python 结构，非可运行代码
 
 from google.adk.agents import Agent
@@ -9175,16 +9226,16 @@ gemini_flash_agent = Agent(
    description="一个快速高效的智能体，专用于处理简单查询。",
    instruction="你是一位能快速回答直接问题的助手。"
 )
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # 概念性的类 Python 结构，非可运行代码
 
 from google.adk.agents import Agent
@@ -9205,7 +9256,7 @@ gemini_flash_agent = Agent(
    description="一个快速高效的智能体，专用于处理简单查询。",
    instruction="你是一位能快速回答直接问题的助手。"
 )
-```
+````
 ]
 
 路由智能体（Router Agent）可以根据一些简单指标对查询进行分发。例如，它可以依据查询长度，将较短的查询路由至成本较低的模型，而将较长的查询导向能力更强的模型。
@@ -9215,12 +9266,12 @@ gemini_flash_agent = Agent(
 此外，还可以通过多种优化技术来进一步提升 LLM 路由器的性能。提示词微调（Prompt tuning）旨在通过优化提示词本身来引导路由器 LLM 做出更精准的路由决策。而微调（Fine-tuning）则是在一个包含大量查询及其最优模型选择的数据集上对 LLM 路由器进行训练，以显著提升其路由的准确性与效率。这种动态路由能力使得系统能够在响应质量与成本效益之间达到理想的平衡。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # 概念性的类 Python 结构，非可运行代码
 
 from google.adk.agents import Agent, BaseAgent
@@ -9249,16 +9300,16 @@ class QueryRouterAgent(BaseAgent):
            print(f"检测到长查询（长度: {query_length}），路由至 Gemini Pro 智能体")
            response = await gemini_pro_agent.run_async(context.current_message)
            yield Event(author=self.name, content=f"Pro 智能体处理完成: {response}")
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # 概念性的类 Python 结构，非可运行代码
 
 from google.adk.agents import Agent, BaseAgent
@@ -9287,7 +9338,7 @@ class QueryRouterAgent(BaseAgent):
            print(f"检测到长查询（长度: {query_length}），路由至 Gemini Pro 智能体")
            response = await gemini_pro_agent.run_async(context.current_message)
            yield Event(author=self.name, content=f"Pro 智能体处理完成: {response}")
-```
+````
 ]
 
 批判性智能体（Critique Agent）的主要职责是评估语言模型的输出响应，其反馈具有多种重要功能。
@@ -9299,12 +9350,12 @@ class QueryRouterAgent(BaseAgent):
 批判性智能体的审查范围可以灵活配置：既可以只评估应答智能体生成的文本内容，也可以同时评估原始查询与生成文本，以全面判断响应是否精准地契合了问题的初衷。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 CRITIC_SYSTEM_PROMPT = """
 你是**批判性智能体**，是我们协作式研究助理系统中的质量保证核心。你的主要职责是**一丝不苟地审查与挑战**“研究员智能体”提供的信息，以确保最终内容的**准确性、完整性与客观性**。
 
@@ -9317,16 +9368,16 @@ CRITIC_SYSTEM_PROMPT = """
 
 所有批判都必须是建设性的。你的目标是巩固研究成果，而非否定它。请在反馈中清晰地组织观点，并明确指出需要修订的具体环节。你的最终目标是确保研究成果达到最高质量标准。
 """
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 CRITIC_SYSTEM_PROMPT = """
 你是**批判性智能体**，是我们协作式研究助理系统中的质量保证核心。你的主要职责是**一丝不苟地审查与挑战**“研究员智能体”提供的信息，以确保最终内容的**准确性、完整性与客观性**。
 
@@ -9339,7 +9390,7 @@ CRITIC_SYSTEM_PROMPT = """
 
 所有批判都必须是建设性的。你的目标是巩固研究成果，而非否定它。请在反馈中清晰地组织观点，并明确指出需要修订的具体环节。你的最终目标是确保研究成果达到最高质量标准。
 """
-```
+````
 ]
 
 批判性智能体的运作完全基于一个预先设定的系统提示词，该提示词明确了其角色、职责与反馈方式。一个设计精良的批判性智能体提示词必须清晰地定义其评估者的角色定位，具体指明需要重点审查的方面，并强调其反馈应是建设性的，而非简单的全盘否定。此外，提示词还应鼓励智能体在评估时同时发现优点与不足，并指导其如何构建和呈现反馈内容。
@@ -9349,12 +9400,12 @@ CRITIC_SYSTEM_PROMPT = """
 OpenRouter 提供了一个统一的接口，开发者仅通过单个 API 端点即可访问数百个 AI 模型。该平台还提供自动故障转移和成本优化功能，并允许开发者通过其偏好的 SDK 或框架轻松集成。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 import requests
 import json
 
@@ -9375,16 +9426,16 @@ response = requests.post(
         ]
     })
 )
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 import requests
 import json
 
@@ -9405,7 +9456,7 @@ response = requests.post(
         ]
     })
 )
-```
+````
 ]
 
 上方的代码片段展示了如何使用requests库与 OpenRouter API 进行交互。它向平台的对话生成接口发送一个POST请求，其中包含了用户的提问消息。请求头中必须包含 API 密钥用于授权，同时也可以包含来源网站等可选信息。这段代码的目标是从指定的语言模型（本例中为openai/gpt-4o）获取响应。
@@ -9417,31 +9468,31 @@ OpenRouter 提供了两种核心方法，用于路由请求并决定由哪个计
 此功能会将用户的请求路由至一个从平台精选模型池中选出的最优模型。平台选择模型的依据是用户提示词的具体内容。最终处理该请求的模型标识符，会在返回响应的元数据中明确标出。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 {
     "model": "openrouter/auto",
     ... // 其他 API 参数
 }
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 {
     "model": "openrouter/auto",
     ... // 其他 API 参数
 }
-```
+````
 ]
 
 2. 顺序模型回退
@@ -9449,31 +9500,31 @@ OpenRouter 提供了两种核心方法，用于路由请求并决定由哪个计
 该机制通过允许用户自行指定一个按优先级排序的模型列表，来提供服务冗余和操作容错能力。系统会首先尝试使用列表中的首选模型处理请求。如果该模型因服务不可用、速率限制或内容过滤等任何错误而调用失败，系统将自动把请求转发给列表中的下一个模型。这个过程会依次进行，直到列表中某个模型成功执行请求，或所有模型都尝试失败为止。最终的计费和返回的模型标识符将以成功完成计算的那个模型为准。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 {
     "models": ["anthropic/claude-3.5-sonnet", "gryphe/mythomax-l2-13b"],
     ... // 其他 API 参数
 }
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 {
     "models": ["anthropic/claude-3.5-sonnet", "gryphe/mythomax-l2-13b"],
     ... // 其他 API 参数
 }
-```
+````
 ]
 
 此外，OpenRouter 还提供了一个详尽的排行榜 (https://openrouter.ai/rankings)，该榜单根据各个模型累计处理的 token 数量对其进行排名。平台上也汇集了来自不同供应商（如 ChatGPT、Gemini、Claude）的最新模型（见图1）。
@@ -9682,12 +9733,12 @@ PALMs 能够将复杂的计算、逻辑运算和数据处理任务，移交给�
 这种混合模式将 LLM 的语言理解与生成能力同精确的计算能力相结合，使得模型能够更可靠、更准确地解决更广泛的复杂问题。这对智能体尤为重要，因为它使得智能体能在语言能力之外，借助精确计算来执行更可靠的行动。Google ADK 框架中对外部工具的调用就是该模式的一个实例。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from google.adk.tools import agent_tool
 from google.adk.agents import Agent
 from google.adk.tools import google_search
@@ -9719,16 +9770,16 @@ root_agent = Agent(
         agent_tool.AgentTool(agent=coding_agent)
     ],
 )
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from google.adk.tools import agent_tool
 from google.adk.agents import Agent
 from google.adk.tools import google_search
@@ -9760,7 +9811,7 @@ root_agent = Agent(
         agent_tool.AgentTool(agent=coding_agent)
     ],
 )
-```
+````
 ]
 
 可验证奖励的强化学习（Reinforcement Learning with Verifiable Rewards, RLVR）
@@ -9873,12 +9924,12 @@ MASS 框架采用一种多阶段优化策略，通过将提示词优化与拓扑
 - 容器化：项目支持使用docker-compose up命令来构建并运行 Docker 镜像。需要注意的是，docker-compose.yml示例文件依赖 LangSmith API 密钥。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # 创建我们的智能体状态图
 builder = StateGraph(OverallState, config_schema=Configuration)
 
@@ -9910,16 +9961,16 @@ builder.add_edge("finalize_answer", END)
 
 # 编译状态图，命名为 "pro-search-agent"
 graph = builder.compile(name="pro-search-agent")
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # 创建我们的智能体状态图
 builder = StateGraph(OverallState, config_schema=Configuration)
 
@@ -9951,7 +10002,7 @@ builder.add_edge("finalize_answer", END)
 
 # 编译状态图，命名为 "pro-search-agent"
 graph = builder.compile(name="pro-search-agent")
-```
+````
 ]
 
 ==== 智能体的思考过程解析
@@ -10048,12 +10099,12 @@ graph = builder.compile(name="pro-search-agent")
 下方的代码示例将演示如何利用 CrewAI 为 AI 系统添加一个安全层。其核心思路是：使用一个专门的智能体和任务，在一个精心设计的提示词指导下，并由一个基于 Pydantic 的验证函数作为技术护栏，来对用户输入进行预先筛查，以拦截潜在的风险内容，防止其触达主 AI 系统。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # 版权所有 (c) 2025 Marco Fago
 # [https://www.linkedin.com/in/marco-fago/](https://www.linkedin.com/in/marco-fago/)
 #
@@ -10293,16 +10344,16 @@ if name == "main":
     for i, test_input in enumerate(test_cases):
         is_compliant, message, triggered_policies = run_guardrail_crew(test_input)
         print_test_case_result(i + 1, test_input, is_compliant, message, triggered_policies)
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # 版权所有 (c) 2025 Marco Fago
 # [https://www.linkedin.com/in/marco-fago/](https://www.linkedin.com/in/marco-fago/)
 #
@@ -10542,7 +10593,7 @@ if name == "main":
     for i, test_input in enumerate(test_cases):
         is_compliant, message, triggered_policies = run_guardrail_crew(test_input)
         print_test_case_result(i + 1, test_input, is_compliant, message, triggered_policies)
-```
+````
 ]
 
 这段 Python 代码实现了一套精密的内容策略执行机制。其核心目标是在主 AI 系统处理用户输入之前，对其进行预先筛查，以确保输入内容严格遵守预设的安全与相关性策略。
@@ -10594,12 +10645,12 @@ Google Cloud 的 Vertex AI 提供了一套多维度的综合性方法，旨在�
 下文将通过一个实例进行说明。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from google.adk.agents import Agent # 正确的导入
 from google.adk.tools.base_tool import BaseTool
 from google.adk.tools.tool_context import ToolContext
@@ -10642,16 +10693,16 @@ root_agent = Agent( # 使用文档中定义的 Agent 类
         # ... 此处为工具函数或 Tool 实例的列表 ...
     ]
 )
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 from google.adk.agents import Agent # 正确的导入
 from google.adk.tools.base_tool import BaseTool
 from google.adk.tools.tool_context import ToolContext
@@ -10694,7 +10745,7 @@ root_agent = Agent( # 使用文档中定义的 Agent 类
         # ... 此处为工具函数或 Tool 实例的列表 ...
     ]
 )
-```
+````
 ]
 
 这段 Python 代码定义了一个智能体及其在执行工具前的验证回调函数。代码首先导入了Agent、BaseTool和ToolContext等必要的组件。其中，validate\_tool\_params函数被设计为一个回调，会在智能体调用任何工具之前触发。该函数接收工具本身、调用参数以及ToolContext作为输入。在函数内部，它会从ToolContext中访问当前的会话状态，并将工具调用参数中的user\_id\_param与会话中存储的session\_user\_id进行比较。如果这两个 ID 不匹配，则表明存在潜在的安全风险，函数会返回一个包含错误信息的字典，从而阻止该工具的执行。反之，如果验证通过，函数将返回None，允许工具继续运行。
@@ -10757,31 +10808,31 @@ root_agent = Agent( # 使用文档中定义的 Agent 类
 输出格式：你必须以 JSON 格式输出你的决策，且必须包含decision和reasoning这两个键。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 {
     "decision": "safe" | "unsafe",
     "reasoning": "对决策的简要解释 (例如：'检测到越狱企图。', '指令要求生成仇恨言论。', '关于政治的超范围讨论。', '提及了竞争对手 X。')"
 }
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 {
     "decision": "safe" | "unsafe",
     "reasoning": "对决策的简要解释 (例如：'检测到越狱企图。', '指令要求生成仇恨言论。', '关于政治的超范围讨论。', '提及了竞争对手 X。')"
 }
-```
+````
 ]
 
 ----------------------------------------
@@ -10848,12 +10899,12 @@ root_agent = Agent( # 使用文档中定义的 Agent 类
 这是评估智能体输出质量与准确性的核心流程。它主要判断智能体在回应给定输入时，所提供的信息是否切题、正确、合乎逻辑、不带偏见且内容准确。评估指标可包括事实正确性、语言流畅度、语法精确度以及对用户原始意图的遵循程度。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 def evaluate_response_accuracy(agent_output: str, expected_output: str) -> float:
     """为智能体的响应计算一个简单的准确率得分。"""
     # 这是一个非常基础的精确匹配方法；现实世界的应用会采用更复杂的评估指标
@@ -10864,16 +10915,16 @@ agent_response = "The capital of France is Paris."
 ground_truth = "Paris is the capital of France."
 score = evaluate_response_accuracy(agent_response, ground_truth)
 print(f"响应准确率: {score}")
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 def evaluate_response_accuracy(agent_output: str, expected_output: str) -> float:
     """为智能体的响应计算一个简单的准确率得分。"""
     # 这是一个非常基础的精确匹配方法；现实世界的应用会采用更复杂的评估指标
@@ -10884,7 +10935,7 @@ agent_response = "The capital of France is Paris."
 ground_truth = "Paris is the capital of France."
 score = evaluate_response_accuracy(agent_response, ground_truth)
 print(f"响应准确率: {score}")
-```
+````
 ]
 
 上方的 Python 函数evaluate\_response\_accuracy通过对智能体的输出与预期输出进行精确且不区分大小写的字符串比较（在移除首尾空格后），来计算一个基础的准确率得分。如果两者完全匹配，函数返回 1.0，否则返回 0.0，这代表了一种二元的“正确/错误”评估。这种方法虽然对于简单的校验而言简单明了，但它无法处理诸如“意译”或“语义等价”等语言上的变化。
@@ -10911,12 +10962,12 @@ print(f"响应准确率: {score}")
 对于由 LLM 驱动的智能体，追踪 token 的使用量对于成本管理和资源优化至关重要。LLM 服务的计费通常与其处理的 token 数量（包括输入和输出）直接挂钩。因此，高效地使用 token 能够直接降低运营成本。此外，监控 token 数量还有助于发现提示词工程或响应生成流程中潜在的优化点。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # 这是一个概念性示例，实际的 token 计数依赖于具体的 LLM API
 class LLMInteractionMonitor:
    def __init__(self):
@@ -10940,16 +10991,16 @@ monitor.record_interaction("法国的首都是哪里？", "法国的首都是巴
 monitor.record_interaction("给我讲个笑话。", "为什么科学家不相信原子？因为它们构成了万物！")
 input_t, output_t = monitor.get_total_tokens()
 print(f"总输入 token: {input_t}, 总输出 token: {output_t}")
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 # 这是一个概念性示例，实际的 token 计数依赖于具体的 LLM API
 class LLMInteractionMonitor:
    def __init__(self):
@@ -10973,7 +11024,7 @@ monitor.record_interaction("法国的首都是哪里？", "法国的首都是巴
 monitor.record_interaction("给我讲个笑话。", "为什么科学家不相信原子？因为它们构成了万物！")
 input_t, output_t = monitor.get_total_tokens()
 print(f"总输入 token: {input_t}, 总输出 token: {output_t}")
-```
+````
 ]
 
 本节介绍了一个名为LLMInteractionMonitor的概念性 Python 类，其设计目的是追踪大型语言模型交互过程中的 token 使用情况。该类内部为输入和输出 token 分别设置了计数器。它的record\_interaction方法通过简单地分割提示词和响应字符串来模拟 token 计数。
@@ -10987,12 +11038,12 @@ print(f"总输入 token: {input_t}, 总输出 token: {output_t}")
 通过利用 LLM 先进的语言能力，该方法能够对主观品质给出细致入微且贴近人类的评估，其效果远超简单的关键词匹配或基于规则的判断。尽管该技术尚在发展之中，但它在实现定性评估的自动化与规模化方面，已展现出巨大的潜力。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 import google.generativeai as genai
 import os
 import json
@@ -11140,16 +11191,16 @@ if __name__ == "__main__":
    judgment_vague = judge.judge_survey_question(vague_legal_survey_question)
    if judgment_vague:
        print(json.dumps(judgment_vague, indent=2, ensure_ascii=False))
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 import google.generativeai as genai
 import os
 import json
@@ -11297,7 +11348,7 @@ if __name__ == "__main__":
    judgment_vague = judge.judge_survey_question(vague_legal_survey_question)
    if judgment_vague:
        print(json.dumps(judgment_vague, indent=2, ensure_ascii=False))
-```
+````
 ]
 
 这段 Python 代码定义了一个名为LLMJudgeForLegalSurvey的类，其设计目的是利用生成式 AI 模型来评估法律调查问卷的质量。它通过google.generativeai库与 Gemini 系列模型进行交互。
@@ -11458,12 +11509,12 @@ if __name__ == "__main__":
 下文将演示如何使用 LangChain 框架开发一个项目经理 AI 智能体。该智能体能够处理团队成员任务的创建、优先级排序和分配，展现了大型语言模型结合定制化工具在自动化项目管理领域的应用。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 import os
 import asyncio
 from typing import List, Optional, Dict, Type
@@ -11648,16 +11699,16 @@ async def run_simulation():
 # 运行模拟
 if __name__ == "__main__":
    asyncio.run(run_simulation())
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 import os
 import asyncio
 from typing import List, Optional, Dict, Type
@@ -11842,7 +11893,7 @@ async def run_simulation():
 # 运行模拟
 if __name__ == "__main__":
    asyncio.run(run_simulation())
-```
+````
 ]
 
 这段 Python 代码使用 LangChain 框架实现了一个简单的任务管理系统，其设计目的是模拟一个由大型语言模型驱动的项目经理智能体。
@@ -11965,12 +12016,12 @@ Agent Laboratory 的模块化架构确保了其计算上的灵活性。其最终
 评判：为了模拟人类的评估过程，该系统采用了一种“三方智能体评判机制”来评估产出。具体而言，系统会部署三个不同的自主智能体，每一个都被设定为从一个特定的、独特的视角来评估研究成果。通过这种方式，系统共同模仿了人类判断中那种细致入微且多维度的特质，从而实现了一种比单一指标更稳健、更全面的评估，能够捕捉到更丰富的定性信息。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 class ReviewersAgent:
    def __init__(self, model="gpt-4o-mini", notes=None, openai_api_key=None):
        if notes is None:
@@ -11994,16 +12045,16 @@ class ReviewersAgent:
        review_3 = get_score(outlined_plan=plan, latex=report, reward_model_llm=self.model, reviewer_type=reviewer_3, openai_api_key=self.openai_api_key)
  
        return f"审稿人 #1 的意见:\n{review_1}, \n\n审稿人 #2 的意见:\n{review_2}, \n\n审稿人 #3 的意见:\n{review_3}"
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 class ReviewersAgent:
    def __init__(self, model="gpt-4o-mini", notes=None, openai_api_key=None):
        if notes is None:
@@ -12027,18 +12078,18 @@ class ReviewersAgent:
        review_3 = get_score(outlined_plan=plan, latex=report, reward_model_llm=self.model, reviewer_type=reviewer_3, openai_api_key=self.openai_api_key)
  
        return f"审稿人 #1 的意见:\n{review_1}, \n\n审稿人 #2 的意见:\n{review_2}, \n\n审稿人 #3 的意见:\n{review_3}"
-```
+````
 ]
 
 为“评判智能体”设计的特定提示词，旨在严谨地模拟人类审稿人通常所采用的认知框架与评估标准。该提示词会引导智能体从一个近似于人类专家的视角来分析研究产出，综合考量其相关性、逻辑连贯性、事实准确性以及整体质量等因素。通过精心设计这些提示词来复刻人类的审稿流程，该系统旨在实现一种能够媲美人类洞察力的、高度复杂的评估能力。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 def get_score(outlined_plan, latex, reward_model_llm, reviewer_type=None, attempts=3, openai_api_key=None):
     e = str()
     for _attempt in range(attempts):
@@ -12086,16 +12137,16 @@ def get_score(outlined_plan, latex, reward_model_llm, reviewer_type=None, attemp
             只允许使用 "Accept" 或 "Reject"。
             此 JSON 将被程序自动解析，请务-必确保其格式精确无误。
             """
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 def get_score(outlined_plan, latex, reward_model_llm, reviewer_type=None, attempts=3, openai_api_key=None):
     e = str()
     for _attempt in range(attempts):
@@ -12143,7 +12194,7 @@ def get_score(outlined_plan, latex, reward_model_llm, reviewer_type=None, attemp
             只允许使用 "Accept" 或 "Reject"。
             此 JSON 将被程序自动解析，请务-必确保其格式精确无误。
             """
-```
+````
 ]
 
 在这个多智能体系统中，整个研究流程围绕着高度专业化的角色进行组织，以此来模仿典型的学术层级结构，从而简化工作流程并优化最终产出。
@@ -12153,12 +12204,12 @@ def get_score(outlined_plan, latex, reward_model_llm, reviewer_type=None, attemp
 教授智能体在系统中扮演着首席研究总监的角色，负责确立研究议程、定义核心研究问题，并将具体任务委派给其他智能体。该智能体负责设定整个项目的战略方向，并确保所有工作都与最终的项目目标保持一致。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 class ProfessorAgent(BaseAgent):
     def __init__(self, model="gpt4omini", notes=None, max_steps=100, openai_api_key=None):
         super().__init__(model, notes, max_steps, openai_api_key)
@@ -12187,16 +12238,16 @@ class ProfessorAgent(BaseAgent):
         
         # 清理模型输出中可能包含的代码块标记
         return model_resp.replace("```markdown", "").replace("```", "").strip()
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 class ProfessorAgent(BaseAgent):
     def __init__(self, model="gpt4omini", notes=None, max_steps=100, openai_api_key=None):
         super().__init__(model, notes, max_steps, openai_api_key)
@@ -12225,7 +12276,7 @@ class ProfessorAgent(BaseAgent):
         
         # 清理模型输出中可能包含的代码块标记
         return model_resp.replace("```markdown", "").replace("```", "").strip()
-```
+````
 ]
 
 博士后智能体（PostDoc Agent）
@@ -12233,12 +12284,12 @@ class ProfessorAgent(BaseAgent):
 博士后智能体的角色是研究工作的具体执行者。其职责包括进行文献综述、设计并实施实验，以及生成研究论文等最终产出。尤为重要的是，该智能体具备编写并执行代码的能力，这使其能够将实验方案和数据分析流程付诸实践。因此，该智能体是产出研究成果的核心角色。
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 class PostdocAgent(BaseAgent):
     def __init__(self, model="gpt4omini", notes=None, max_steps=100, openai_api_key=None):
         super().__init__(model, notes, max_steps, openai_api_key)
@@ -12274,16 +12325,16 @@ class PostdocAgent(BaseAgent):
             )
         
         return ""
-```
+````
 ]
 
 #block(
-  fill: luma(245),
-  inset: 10pt,
-  radius: 4pt,
-  width: 100%,
+  // fill: luma(245),
+  // inset: 10pt,
+  // radius: 4pt,
+  // width: 100%,
 )[
-```python
+````python
 class PostdocAgent(BaseAgent):
     def __init__(self, model="gpt4omini", notes=None, max_steps=100, openai_api_key=None):
         super().__init__(model, notes, max_steps, openai_api_key)
@@ -12319,7 +12370,7 @@ class PostdocAgent(BaseAgent):
             )
         
         return ""
-```
+````
 ]
 
 审稿人智能体（Reviewer Agents）
